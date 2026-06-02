@@ -825,13 +825,21 @@ function openTaskForm(t, ownerId){
 
     if(!modal) return;
 
+    let _busy = false;
+
     modal.onclick = (ev) => {
+
+      if(_busy) return;
 
       // botones del tipo (fija/eventual)
 
       const tipoBtn = ev.target.closest("[data-tipo]");
 
       if(tipoBtn && modal.contains(tipoBtn)){
+
+        ev.stopPropagation();
+
+        _busy = true;
 
         collect();
 
@@ -848,6 +856,10 @@ function openTaskForm(t, ownerId){
       const freqBtn = ev.target.closest("[data-freq]");
 
       if(freqBtn && modal.contains(freqBtn)){
+
+        ev.stopPropagation();
+
+        _busy = true;
 
         collect();
 
@@ -869,6 +881,10 @@ function openTaskForm(t, ownerId){
 
       if(dayBtn && modal.contains(dayBtn)){
 
+        ev.stopPropagation();
+
+        _busy = true;
+
         collect();
 
         const i = +dayBtn.dataset.day;
@@ -888,6 +904,8 @@ function openTaskForm(t, ownerId){
       // Guardar
 
       if(ev.target.closest("#t_save")){
+
+        ev.stopPropagation();
 
         collect();
 
@@ -916,6 +934,8 @@ function openTaskForm(t, ownerId){
       // Eliminar (solo edición)
 
       if(ev.target.closest("#t_del")){
+
+        ev.stopPropagation();
 
         if(confirm("¿Eliminar esta tarea?")){
 
