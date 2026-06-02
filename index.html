@@ -802,12 +802,15 @@ function openTaskForm(t, ownerId){
     </div><div class="modal-foot">${!isNew?`<button class="btn btn-line" id="t_del" style="margin-right:auto;color:var(--red)">Eliminar</button>`:''}<button class="btn btn-line" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" id="t_save">${isNew?"Crear tarea":"Guardar"}</button></div>`;};
   showModal(body());
   function collect(){
-    d.titulo=val("t_titulo");d.hora=val("t_hora");d.conflicto=val("t_conflicto")==="si";d.notas=val("t_notas");
-    if(d.tipo==="eventual"){d.fecha=val("t_fecha")||ymd(new Date());}
-    else {
+    const _t=document.getElementById("t_titulo"); if(_t) d.titulo=_t.value;
+    const _h=document.getElementById("t_hora"); if(_h) d.hora=_h.value;
+    const _c=document.getElementById("t_conflicto"); if(_c) d.conflicto=_c.value==="si";
+    const _n=document.getElementById("t_notas"); if(_n) d.notas=_n.value;
+    if(d.tipo==="eventual"){const fe=document.getElementById("t_fecha");if(fe)d.fecha=fe.value||ymd(new Date());}
+    else{
       if(d.rec.freq==="mensual"){
-        const dm=val("r_diasMes");d.rec.diasMes=dm?dm.split(",").map(s=>parseInt(s.trim())).filter(n=>n>=1&&n<=31):[];
-        d.rec.regla=val("r_regla")||"";
+        const dm=document.getElementById("r_diasMes");if(dm)d.rec.diasMes=dm.value?dm.value.split(",").map(s=>parseInt(s.trim())).filter(n=>n>=1&&n<=31):[];
+        const rr=document.getElementById("r_regla");if(rr)d.rec.regla=rr.value||"";
       }
     }
   }
