@@ -793,7 +793,7 @@ function openTaskForm(t, ownerId){
     }
     return `<div class="modal-head"><div><h3>${isNew?"Nueva tarea":"Editar tarea"}</h3><div class="hsub">${d.tipo==='fija'?'Tarea recurrente':'Tarea eventual'}</div></div><button class="xclose" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <div class="modal-body">
-      <div class="field"><label>Título de la tarea</label><input id="t_titulo" value="${esc(d.titulo)}" placeholder="Ej. Revisar correos pendientes" autofocus></div>
+      <div class="field"><label>Título de la tarea</label><input id="t_titulo" value="${esc(d.titulo)}" placeholder="Ej. Revisar correos pendientes"></div>
       <div class="field"><label>Tipo</label><div class="seg"><button type="button" class="${d.tipo==='fija'?'on':''}" data-tipo="fija">Fija (recurrente)</button><button type="button" class="${d.tipo==='eventual'?'on':''}" data-tipo="eventual">Eventual</button></div></div>
       ${recBlock}
       <div class="frow"><div class="field"><label>Hora (opcional)</label><input type="time" id="t_hora" value="${esc(d.hora||'')}"></div>
