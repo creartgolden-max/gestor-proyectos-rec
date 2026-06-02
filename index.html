@@ -813,19 +813,122 @@ function openTaskForm(t, ownerId){
   }
   function rerender(){collect();showModal(body());bind();}
   function bind(){
-    document.querySelectorAll("[data-tipo]").forEach(b=>b.onclick=()=>{collect();d.tipo=b.dataset.tipo;rerender();});
-    document.querySelectorAll("[data-freq]").forEach(b=>b.onclick=()=>{collect();d.rec.freq=b.dataset.freq;rerender();});
-    document.querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{collect();const i=+b.dataset.day;if(d.rec.dias.includes(i))d.rec.dias=d.rec.dias.filter(x=>x!==i);else d.rec.dias.push(i);rerender();});
-    document.getElementById("t_save").onclick=()=>{collect();if(!d.titulo.trim()){toast("Pon un título");return;}
-      if(d.tipo==="fija"&&d.rec.freq==="semanal"&&!d.rec.dias.length){toast("Elige al menos un día");return;}
-      if(!STATE.tasks)STATE.tasks=[];
-      if(isNew)STATE.tasks.push(d);else{const i=STATE.tasks.findIndex(x=>x.id===d.id);STATE.tasks[i]=d;}
-      save();closeModal();render();toast(isNew?"Tarea creada":"Tarea actualizada");};
-    const del=document.getElementById("t_del");if(del)del.onclick=()=>{if(confirm("¿Eliminar esta tarea?")){STATE.tasks=STATE.tasks.filter(x=>x.id!==d.id);save();closeModal();render();toast("Tarea eliminada");}};
-  }
-  bind();
-}
 
+    // Delegación de eventos: un solo listener en el modal raíz.
+
+    // Sobrevive a re-renders del contenido y evita botones "muertos".
+
+    const modal = document.querySelector(".modal");
+
+    if(!modal) return;
+
+    modal.onclick = (ev) => {
+
+      // botones del tipo (fija/eventual)
+
+      const tipoBtn = ev.target.closest("[data-tipo]");
+
+      if(tipoBtn && modal.contains(tipoBtn)){
+
+        collect();
+
+        d.tipo = tipoBtn.dataset.tipo;
+
+        rerender();
+
+        return;
+
+      }
+
+      // botones de frecuencia (diaria/semanal/mensual)
+
+      const freqBtn = ev.target.closest("[data-freq]");
+
+      if(freqBtn && modal.contains(freqBtn)){
+
+        collect();
+
+        d.rec.freq = freqBtn.dataset.freq;
+
+        if(!d.rec.dias) d.rec.dias = [];
+
+        if(!d.rec.diasMes) d.rec.diasMes = [];
+
+        rerender();
+
+        return;
+
+      }
+
+      // botones de días de la semana
+
+      const dayBtn = ev.target.closest("[data-day]");
+
+      if(dayBtn && modal.contains(dayBtn)){
+
+        collect();
+
+        const i = +dayBtn.dataset.day;
+
+        if(!d.rec.dias) d.rec.dias = [];
+
+        if(d.rec.dias.includes(i)) d.rec.dias = d.rec.dias.filter(x => x !== i);
+
+        else d.rec.dias.push(i);
+
+        rerender();
+
+        return;
+
+      }
+
+      // Guardar
+
+      if(ev.target.closest("#t_save")){
+
+        collect();
+
+        if(!d.titulo.trim()){ toast("Pon un título"); return; }
+
+        if(d.tipo === "fija" && d.rec.freq === "semanal" && !d.rec.dias.length){
+
+          toast("Elige al menos un día"); return;
+
+        }
+
+        if(!STATE.tasks) STATE.tasks = [];
+
+        if(isNew) STATE.tasks.push(d);
+
+        else { const i = STATE.tasks.findIndex(x => x.id === d.id); STATE.tasks[i] = d; }
+
+        save(); closeModal(); render();
+
+        toast(isNew ? "Tarea creada" : "Tarea actualizada");
+
+        return;
+
+      }
+
+      // Eliminar (solo edición)
+
+      if(ev.target.closest("#t_del")){
+
+        if(confirm("¿Eliminar esta tarea?")){
+
+          STATE.tasks = STATE.tasks.filter(x => x.id !== d.id);
+
+          save(); closeModal(); render(); toast("Tarea eliminada");
+
+        }
+
+        return;
+
+      }
+
+    };
+
+  }
 function render(){
   renderTopbar();
   // protección por rol: si un responsable cae en vista ejecutiva, lo mandamos a su panel
