@@ -814,7 +814,7 @@ function openTaskForm(t, ownerId){
       }
     }
   }
-  function rerender(){collect();const _m=document.querySelector(".modal");if(_m){_m.innerHTML=body();}else{showModal(body());}bind();}
+  function rerender(){collect();setTimeout(()=>{const _m=document.querySelector(".modal");if(_m){_m.innerHTML=body();}else{showModal(body());}bind();},0);}
   function bind(){
 
     // Delegación de eventos: un solo listener en el modal raíz.
