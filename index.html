@@ -340,6 +340,35 @@ input,select,textarea{font-family:inherit;font-size:14px;color:var(--text)}
 .day-chk.on{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 4px 10px rgba(47,107,255,.3)}
 .day-chk:hover:not(.on){border-color:var(--blue);color:var(--blue-d)}
 
+
+/* PANTALLA DE BLOQUEO de pendientes acumuladas */
+.pend-block{border:1px solid #F6C9D7;box-shadow:0 8px 28px rgba(224,36,90,.10)}
+.pb-head{display:flex;align-items:center;gap:11px;padding:15px 16px;background:linear-gradient(100deg,#FFF0F3,#FCE4EC);border-bottom:1px solid #F6C9D7}
+.pb-ic{width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;background:#fff;color:var(--red);box-shadow:var(--sh-sm)}
+.pb-ic svg{width:20px;height:20px}
+.pb-tt{font-family:var(--font-d);font-weight:700;font-size:15px;color:#B01646;line-height:1.1}
+.pb-sub{font-size:11.5px;color:#C2557A;font-weight:600;margin-top:2px}
+.pb-progress{padding:10px 16px 0;position:relative}
+.pb-bar{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--red),#FF6B95)}
+.pb-count{display:block;font-size:10.5px;color:var(--faint);font-weight:700;margin-top:6px;text-align:right}
+.pb-card{padding:14px 16px 16px}
+.pb-date{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.pb-title{font-family:var(--font-d);font-weight:700;font-size:17px;line-height:1.25;color:var(--ink)}
+.pb-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:10.5px;font-weight:700}
+.pb-meta .rec{background:var(--blue-soft);color:var(--blue-d);padding:2px 7px;border-radius:5px}
+.pb-meta .ev{background:var(--gold-soft);color:#9A7B12;padding:2px 7px;border-radius:5px}
+.pb-meta .hr{color:var(--blue-d);font-family:var(--font-d)}
+.pb-notes{margin-top:10px;font-size:12px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;line-height:1.4}
+.pb-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.pb-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:11px;font-weight:700;font-size:13.5px;transition:.15s;border:1.5px solid transparent}
+.pb-btn svg{width:16px;height:16px}
+.pb-done{background:var(--green);color:#fff}
+.pb-done:hover{background:#0E8A3E}
+.pb-repro{background:var(--blue-soft);color:var(--blue-d);border-color:#CFE0FF}
+.pb-repro:hover{background:#DCE9FF}
+.pb-skip{background:#fff;color:var(--muted);border-color:var(--line)}
+.pb-skip:hover{background:var(--surface-2);color:var(--red)}
+
 @media print{.topbar,.toolbar,.modal-foot,.no-print{display:none!important}
   .scrim{position:static;background:none;padding:0;backdrop-filter:none;display:block}
   .modal{box-shadow:none;max-width:100%;border-radius:0;animation:none}.modal-body{max-height:none;overflow:visible;padding:0}
@@ -643,6 +672,7 @@ const app=document.getElementById("app");
    ============================================================ */
 let TASK_TAB = "hoy"; // hoy | semana | mes
 let TASK_VIEW_OWNER = null; // si está set, admin/coord viendo tareas de otro
+let PEND_TOTAL_SESION = 0; // total de pendientes al iniciar el bloqueo, para barra de progreso
 
 const DAY_LBL=["D","L","M","X","J","V","S"]; // 0=D
 const DAY_FULL=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
@@ -694,7 +724,119 @@ function taskRecLabel(t){
   return "Fija";
 }
 
+
+/* ¿la persona estaba ausente ese día? (rango desde..hasta inclusivo) */
+function estaAusente(personId, d){
+  const k=ymd(d);
+  const list=STATE.ausencias||[];
+  return list.some(a=>a.personId===personId && a.desde && a.hasta && k>=a.desde && k<=a.hasta);
+}
+
+/* ¿está omitida ese día? (manual o reprogramada) */
+function taskOmitida(t, d){
+  return !!(t.omitidas && t.omitidas[ymd(d)]);
+}
+
+/* Pendientes acumuladas de un dueño: días (últimos PEND_PISO_DIAS, hasta AYER)
+   en que la tarea aplicaba pero NO fue hecha, NI omitida, NI hubo ausencia. */
+const PEND_PISO_DIAS = 60;
+
+function tareasPendientes(ownerId){
+  const list=tasksForOwner(ownerId);
+  const out=[];
+  const hoy=new Date(); hoy.setHours(0,0,0,0);
+  // recorre desde ayer hacia atrás hasta el piso
+  for(let i=1;i<=PEND_PISO_DIAS;i++){
+    const d=new Date(hoy); d.setDate(hoy.getDate()-i);
+    if(estaAusente(ownerId, d)) continue; // día completo en ausencia: nada pendiente
+    for(const t of list){
+      if(!taskApplies(t,d)) continue;
+      if(taskDone(t,d)) continue;
+      if(taskOmitida(t,d)) continue;
+      out.push({tarea:t, fecha:ymd(d)});
+    }
+  }
+  // ordenar por fecha ascendente (lo más viejo primero)
+  out.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0);
+  return out;
+}
+
+/* Acciones sobre una pendiente */
+function pendMarcarHecha(t, fechaYmd){
+  if(t.tipo==="eventual"){ t.hechas=true; }
+  else { if(!t.hechas||typeof t.hechas!=="object") t.hechas={}; t.hechas[fechaYmd]=true; }
+}
+
+function pendOmitir(t, fechaYmd, razon){
+  if(!t.omitidas||typeof t.omitidas!=="object") t.omitidas={};
+  t.omitidas[fechaYmd]=razon||"manual";
+}
+
+function pendReprogramarHoy(t, fechaYmd){
+  pendOmitir(t, fechaYmd, "reprogramada");
+  const hoyK=ymd(new Date());
+  t.reprogramada=hoyK;
+  if(t.tipo==="eventual"){
+    t.fecha=hoyK;
+    t.hechas=false;
+  }
+}
+
 function tasksForOwner(ownerId){return STATE.tasks?STATE.tasks.filter(t=>t.ownerId===ownerId):[];}
+
+/* Pantalla de BLOQUEO: pendientes acumuladas una por una */
+function pendBlockHTML(pend){
+  const total=pend.length;
+  if(PEND_TOTAL_SESION < total) PEND_TOTAL_SESION = total;
+  const resueltas = PEND_TOTAL_SESION - total;
+  const pct = PEND_TOTAL_SESION ? Math.round(resueltas/PEND_TOTAL_SESION*100) : 0;
+  const {tarea, fecha}=pend[0];
+  const d=dateFromYmd(fecha);
+  const fLbl=`${DAY_FULL[d.getDay()]} ${d.getDate()} ${MONTH_LBL[d.getMonth()]}`;
+  const restantes=total-1;
+  return `<div class="tasks-panel pend-block">
+    <div class="pb-head">
+      <div class="pb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+      <div><div class="pb-tt">Tienes ${total} pendiente${total!==1?'s':''}</div><div class="pb-sub">Resuélvelas para ver tus tareas de hoy</div></div>
+    </div>
+    <div class="pb-progress"><div class="pb-bar" style="width:${pct}%"></div><span class="pb-count">${restantes>0?restantes+' más después de esta':'última pendiente'}</span></div>
+    <div class="pb-card">
+      <div class="pb-date">${fLbl}</div>
+      <div class="pb-title">${esc(tarea.titulo)}</div>
+      <div class="pb-meta"><span class="${tarea.tipo==='eventual'?'ev':'rec'}">${esc(taskRecLabel(tarea))}</span>${tarea.hora?`<span class="hr">${esc(tarea.hora)}</span>`:''}</div>
+      ${tarea.notas?`<div class="pb-notes">${esc(tarea.notas)}</div>`:''}
+      <div class="pb-actions">
+        <button class="pb-btn pb-done" data-pend-act="hecha" data-pend-id="${tarea.id}" data-pend-fecha="${fecha}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg>La hice
+        </button>
+        <button class="pb-btn pb-repro" data-pend-act="reprogramar" data-pend-id="${tarea.id}" data-pend-fecha="${fecha}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.4 2.6L3 8"/><path d="M3 4v4h4"/></svg>Hacerla hoy
+        </button>
+        <button class="pb-btn pb-skip" data-pend-act="omitir" data-pend-id="${tarea.id}" data-pend-fecha="${fecha}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>Omitir
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function bindPendBlock(ownerId){
+  document.querySelectorAll("[data-pend-act]").forEach(b=>{
+    b.onclick=(ev)=>{
+      ev.stopPropagation();
+      const act=b.dataset.pendAct;
+      const id=b.dataset.pendId;
+      const fecha=b.dataset.pendFecha;
+      const t=STATE.tasks.find(x=>x.id===id);
+      if(!t) return;
+      if(act==="hecha") pendMarcarHecha(t, fecha);
+      else if(act==="omitir") pendOmitir(t, fecha, "manual");
+      else if(act==="reprogramar") pendReprogramarHoy(t, fecha);
+      save();
+      render();
+    };
+  });
+}
 
 /* tareas agrupadas por día para una ventana (Hoy / 7 días / 30 días) */
 function tasksWindow(ownerId, mode){
@@ -711,6 +853,17 @@ function tasksWindow(ownerId, mode){
 function tasksPanelHTML(ownerId, readonly){
   const owner=person(ownerId);
   const isViewingOther=ownerId!==(ME?ME.id:null);
+  // BLOQUEO: si el dueño (no readonly, soy yo) tiene pendientes acumuladas,
+  // mostrar pantalla de bloqueo una-por-una en lugar del panel normal.
+  if(!readonly && !isViewingOther){
+    const pend=tareasPendientes(ownerId);
+    if(pend.length){
+      return pendBlockHTML(pend);
+    } else {
+      PEND_TOTAL_SESION = 0; // limpio: desbloqueado
+    }
+  }
+
   const days=tasksWindow(ownerId, TASK_TAB);
   const counts={
     hoy: tasksWindow(ownerId,"hoy").reduce((s,x)=>s+x.arr.length,0),
@@ -760,6 +913,12 @@ function tasksPanelHTML(ownerId, readonly){
 }
 
 function bindTasksPanel(ownerId, readonly){
+  // si estamos en pantalla de bloqueo, sólo enlazar sus acciones
+  if(!readonly && ownerId===(ME?ME.id:null) && tareasPendientes(ownerId).length){
+    bindPendBlock(ownerId);
+    return;
+  }
+
   document.querySelectorAll("[data-ttab]").forEach(b=>b.onclick=()=>{TASK_TAB=b.dataset.ttab;render();});
   if(!readonly){
     document.querySelectorAll("[data-task-ck]").forEach(b=>b.onclick=(ev)=>{ev.stopPropagation();const[id,dy]=b.dataset["taskCk"].split("|");const t=STATE.tasks.find(x=>x.id===id);if(t){toggleTaskDone(t,dateFromYmd(dy));save();render();}});
