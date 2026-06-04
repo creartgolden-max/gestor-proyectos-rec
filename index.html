@@ -373,12 +373,12 @@ const STATUS_META = {
 };
 /* ---- PINs por defecto (cámbialos): admin = Rodrigo ---- */
 const SEED = { meta:{updated:new Date().toISOString()},
-  /* SEED vacío en versión publicable. Los datos reales viven en Supabase
-     y se cargan al abrir vía load(). Esto evita exponer PINs y nombres
-     en el código fuente del repositorio público. */
+  /* SEED vacío en versión publicable. Los datos reales viven en Supabase. */
   people:[],
   projects:[],
-  tasks:[]
+  tasks:[],
+  ausencias:[],
+  autorizaciones:[]
 }
 
 /* ============ ESTADO GLOBAL ============ */
@@ -396,7 +396,7 @@ const parseD=s=>isDate(s)?new Date(s+"T00:00:00"):null;
 const DAY=86400000;
 const fmtD=s=>{const d=parseD(s);return d?d.toLocaleDateString("es-MX",{day:"2-digit",month:"short",year:"numeric"}):(s||"—");};
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const val=id=>document.getElementById(id).value;
+const val=id=>{const e=document.getElementById(id);return e?e.value:"";};
 const person=id=>STATE.people.find(p=>p.id===id);
 const initials=n=>(n||"?").split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
 /* etiqueta visible de una persona = su PUESTO (desambigua con área si se repite) */
@@ -491,26 +491,40 @@ function setSync(m){const e=document.getElementById("sync");if(!e)return;e.class
 /* ---------- Mapeo DB <-> JS ---------- */
 function dbToPerson(r){return {id:r.id,nombre:r.nombre||"",puesto:r.puesto,proceso:r.proceso||"",pin:r.pin,rol:r.rol||"responsable",admin:!!r.admin};}
 function dbToProject(r){return {id:r.id,nombre:r.nombre,fuente:r.fuente,modalidad:r.modalidad||"individual",ownerId:r.owner_id||"",revisor:r.revisor||"",integrantes:r.integrantes||[],hitos:r.hitos||[],inicio:r.inicio||"",termino:r.termino||"",status:r.status||"Sin comenzar",nota:r.nota||"",obs:r.obs||"",ayuda:r.ayuda,prorroga:r.prorroga,cancelacion:r.cancelacion};}
-function dbToTask(r){return {id:r.id,ownerId:r.owner_id,titulo:r.titulo,tipo:r.tipo||"fija",rec:r.rec,fecha:r.fecha||"",hora:r.hora||"",conflicto:!!r.conflicto,notas:r.notas||"",hechas:r.hechas==null?{}:r.hechas};}
+function dbToTask(r){return {id:r.id,ownerId:r.owner_id,titulo:r.titulo,tipo:r.tipo||"fija",rec:r.rec,fecha:r.fecha||"",hora:r.hora||"",conflicto:!!r.conflicto,notas:r.notas||"",hechas:r.hechas==null?{}:r.hechas,omitidas:r.omitidas==null?{}:r.omitidas,reprogramada:r.reprogramada||null};}
+function dbToAusencia(r){return {id:r.id,personId:r.person_id,desde:r.desde||"",hasta:r.hasta||"",motivo:r.motivo||""};}
+function dbToAutorizacion(r){return {id:r.id,fecha:r.fecha||"",autorizadoPor:r.autorizado_por||"",paraPersona:r.para_persona||"",alcance:r.alcance||"",tareasCanceladas:r.tareas_canceladas||[],motivo:r.motivo||""};}
 
 /* ---------- LOAD: trae todo desde Supabase ---------- */
 async function load(){
-  if(!initSupabase()){ setSync("local"); return; }
+  if(!initSupabase()){ console.error("[DIAG] initSupabase failed - cfgOK?", cfgOK, "URL?", CONFIG.SUPABASE_URL?.slice(0,40), "KEY len?", CONFIG.SUPABASE_ANON_KEY?.length); setSync("local"); return; }
   try{
     setSync("syncing");
-    const [pe,pr,tk]=await Promise.all([
+    console.log("[DIAG] load: pidiendo a Supabase...");
+    const [pe,pr,tk,au,az]=await Promise.all([
       SB.from("gpr_people").select("*"),
       SB.from("gpr_projects").select("*"),
-      SB.from("gpr_tasks").select("*")
+      SB.from("gpr_tasks").select("*"),
+      SB.from("gpr_ausencias").select("*"),
+      SB.from("gpr_autorizaciones").select("*")
     ]);
-    if(pe.error||pr.error||tk.error){ console.error("load:",pe.error||pr.error||tk.error); setSync("local"); return; }
+    console.log("[DIAG] load: respuestas recibidas.");
+    if(pe.error){ console.error("[DIAG] ERROR gpr_people:", pe.error.message, "| code:", pe.error.code, "| details:", pe.error.details, "| hint:", pe.error.hint); }
+    if(pr.error){ console.error("[DIAG] ERROR gpr_projects:", pr.error.message, "| code:", pr.error.code, "| details:", pr.error.details, "| hint:", pr.error.hint); }
+    if(tk.error){ console.error("[DIAG] ERROR gpr_tasks:", tk.error.message, "| code:", tk.error.code, "| details:", tk.error.details, "| hint:", tk.error.hint); }
+    if(au.error){ console.error("[DIAG] ERROR gpr_ausencias:", au.error.message, "| code:", au.error.code); }
+    if(az.error){ console.error("[DIAG] ERROR gpr_autorizaciones:", az.error.message, "| code:", az.error.code); }
+    if(pe.error||pr.error||tk.error){ setSync("local"); return; }
+    console.log("[DIAG] load OK. Personas:", pe.data?.length, "| Proyectos:", pr.data?.length, "| Tareas:", tk.data?.length, "| Ausencias:", au.data?.length, "| Autorizaciones:", az.data?.length);
     STATE.people   = (pe.data||[]).map(dbToPerson);
     STATE.projects = (pr.data||[]).map(dbToProject);
     STATE.tasks    = (tk.data||[]).map(dbToTask);
+    STATE.ausencias      = au.error ? (STATE.ausencias||[]) : (au.data||[]).map(dbToAusencia);
+    STATE.autorizaciones = az.error ? (STATE.autorizaciones||[]) : (az.data||[]).map(dbToAutorizacion);
     LAST_SNAPSHOT = JSON.parse(JSON.stringify({people:STATE.people,projects:STATE.projects,tasks:STATE.tasks}));
     LOADED = true;
     setSync("saved");
-  }catch(e){ console.error("load:",e); setSync("local"); }
+  }catch(e){ console.error("[DIAG] load THREW:", e?.message||e, "| stack:", e?.stack); setSync("local"); }
 }
 
 /* ---------- helpers de diff por id ---------- */
@@ -793,7 +807,7 @@ function openTaskForm(t, ownerId){
     }
     return `<div class="modal-head"><div><h3>${isNew?"Nueva tarea":"Editar tarea"}</h3><div class="hsub">${d.tipo==='fija'?'Tarea recurrente':'Tarea eventual'}</div></div><button class="xclose" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <div class="modal-body">
-      <div class="field"><label>Título de la tarea</label><input id="t_titulo" value="${esc(d.titulo)}" placeholder="Ej. Revisar correos pendientes"></div>
+      <div class="field"><label>Título de la tarea</label><input id="t_titulo" value="${esc(d.titulo)}" placeholder="Ej. Revisar correos pendientes" autofocus></div>
       <div class="field"><label>Tipo</label><div class="seg"><button type="button" class="${d.tipo==='fija'?'on':''}" data-tipo="fija">Fija (recurrente)</button><button type="button" class="${d.tipo==='eventual'?'on':''}" data-tipo="eventual">Eventual</button></div></div>
       ${recBlock}
       <div class="frow"><div class="field"><label>Hora (opcional)</label><input type="time" id="t_hora" value="${esc(d.hora||'')}"></div>
@@ -802,158 +816,78 @@ function openTaskForm(t, ownerId){
     </div><div class="modal-foot">${!isNew?`<button class="btn btn-line" id="t_del" style="margin-right:auto;color:var(--red)">Eliminar</button>`:''}<button class="btn btn-line" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" id="t_save">${isNew?"Crear tarea":"Guardar"}</button></div>`;};
   showModal(body());
   function collect(){
-    const _t=document.getElementById("t_titulo"); if(_t) d.titulo=_t.value;
-    const _h=document.getElementById("t_hora"); if(_h) d.hora=_h.value;
-    const _c=document.getElementById("t_conflicto"); if(_c) d.conflicto=_c.value==="si";
-    const _n=document.getElementById("t_notas"); if(_n) d.notas=_n.value;
-    if(d.tipo==="eventual"){const fe=document.getElementById("t_fecha");if(fe)d.fecha=fe.value||ymd(new Date());}
-    else{
+    d.titulo=val("t_titulo");d.hora=val("t_hora");d.conflicto=val("t_conflicto")==="si";d.notas=val("t_notas");
+    if(d.tipo==="eventual"){d.fecha=val("t_fecha")||ymd(new Date());}
+    else {
       if(d.rec.freq==="mensual"){
-        const dm=document.getElementById("r_diasMes");if(dm)d.rec.diasMes=dm.value?dm.value.split(",").map(s=>parseInt(s.trim())).filter(n=>n>=1&&n<=31):[];
-        const rr=document.getElementById("r_regla");if(rr)d.rec.regla=rr.value||"";
+        const dm=val("r_diasMes");d.rec.diasMes=dm?dm.split(",").map(s=>parseInt(s.trim())).filter(n=>n>=1&&n<=31):[];
+        d.rec.regla=val("r_regla")||"";
       }
     }
   }
-  function rerender(){collect();setTimeout(()=>{const _m=document.querySelector(".modal");if(_m){_m.innerHTML=body();}else{showModal(body());}bind();},0);}
+  function rerender(){collect();showModal(body());bind();}
   function bind(){
-
     // Delegación de eventos: un solo listener en el modal raíz.
-
     // Sobrevive a re-renders del contenido y evita botones "muertos".
-
     const modal = document.querySelector(".modal");
-
     if(!modal) return;
-
-    let _busy = false;
-
     modal.onclick = (ev) => {
-
-      if(_busy) return;
-
       // botones del tipo (fija/eventual)
-
       const tipoBtn = ev.target.closest("[data-tipo]");
-
       if(tipoBtn && modal.contains(tipoBtn)){
-
-        ev.stopPropagation();
-
-        _busy = true;
-
         collect();
-
         d.tipo = tipoBtn.dataset.tipo;
-
         rerender();
-
         return;
-
       }
-
       // botones de frecuencia (diaria/semanal/mensual)
-
       const freqBtn = ev.target.closest("[data-freq]");
-
       if(freqBtn && modal.contains(freqBtn)){
-
-        ev.stopPropagation();
-
-        _busy = true;
-
         collect();
-
         d.rec.freq = freqBtn.dataset.freq;
-
         if(!d.rec.dias) d.rec.dias = [];
-
         if(!d.rec.diasMes) d.rec.diasMes = [];
-
         rerender();
-
         return;
-
       }
-
       // botones de días de la semana
-
       const dayBtn = ev.target.closest("[data-day]");
-
       if(dayBtn && modal.contains(dayBtn)){
-
-        ev.stopPropagation();
-
-        _busy = true;
-
         collect();
-
         const i = +dayBtn.dataset.day;
-
         if(!d.rec.dias) d.rec.dias = [];
-
         if(d.rec.dias.includes(i)) d.rec.dias = d.rec.dias.filter(x => x !== i);
-
         else d.rec.dias.push(i);
-
         rerender();
-
         return;
-
       }
-
       // Guardar
-
       if(ev.target.closest("#t_save")){
-
-        ev.stopPropagation();
-
         collect();
-
         if(!d.titulo.trim()){ toast("Pon un título"); return; }
-
         if(d.tipo === "fija" && d.rec.freq === "semanal" && !d.rec.dias.length){
-
           toast("Elige al menos un día"); return;
-
         }
-
         if(!STATE.tasks) STATE.tasks = [];
-
         if(isNew) STATE.tasks.push(d);
-
         else { const i = STATE.tasks.findIndex(x => x.id === d.id); STATE.tasks[i] = d; }
-
         save(); closeModal(); render();
-
         toast(isNew ? "Tarea creada" : "Tarea actualizada");
-
         return;
-
       }
-
       // Eliminar (solo edición)
-
       if(ev.target.closest("#t_del")){
-
-        ev.stopPropagation();
-
         if(confirm("¿Eliminar esta tarea?")){
-
           STATE.tasks = STATE.tasks.filter(x => x.id !== d.id);
-
           save(); closeModal(); render(); toast("Tarea eliminada");
-
         }
-
         return;
-
       }
-
     };
-
   }
   bind();
 }
+
 function render(){
   renderTopbar();
   // protección por rol: si un responsable cae en vista ejecutiva, lo mandamos a su panel
