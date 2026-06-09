@@ -279,6 +279,36 @@ input,select,textarea{font-family:inherit;font-size:14px;color:var(--text)}
 
 /* ---------- GESTOR DE TAREAS (panel lateral) ---------- */
 .tasks-panel{background:var(--surface);border-radius:var(--r);box-shadow:var(--sh-sm);border:1px solid var(--line-2);overflow:hidden;display:flex;flex-direction:column}
+
+/* ===== Pantalla de bloqueo de pendientes ===== */
+.tasks-panel.pend-block{border:2px solid var(--red);box-shadow:0 12px 32px -8px rgba(224,36,90,.25)}
+.pend-header{padding:14px 16px;background:linear-gradient(135deg,var(--red),#B01646);color:#fff;display:flex;gap:12px;align-items:center}
+.pend-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.pend-icon svg{width:20px;height:20px;color:#fff}
+.pend-title{font-family:var(--font-d);font-weight:800;font-size:15px;line-height:1.2}
+.pend-sub{font-size:11.5px;color:#FFD3DF;margin-top:2px;font-weight:500}
+.pend-help{padding:10px 14px;background:#FFF5F8;border-bottom:1px solid #FDD7E3;font-size:11.5px;color:#6B7790;line-height:1.4}
+.pend-list{max-height:480px;overflow-y:auto;padding:8px}
+.pend-day{margin-bottom:10px}
+.pend-day-head{font-size:10.5px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.5px;padding:4px 8px 6px;border-bottom:1px solid #FDD7E3;margin-bottom:6px}
+.pend-item{background:#FFFAFB;border:1px solid #FDD7E3;border-radius:10px;padding:10px 11px;margin-bottom:6px;display:flex;flex-direction:column;gap:8px}
+.pend-info .pend-tx{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.pend-info .pend-meta{font-size:10.5px;color:var(--muted);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap}
+.pend-meta .hr{color:var(--blue-d);font-family:var(--font-d);font-weight:700}
+.pend-meta .rec{background:var(--blue-soft);color:var(--blue-d);padding:1px 6px;border-radius:5px;font-weight:700}
+.pend-meta .ev{background:var(--gold-soft);color:#9A7B12;padding:1px 6px;border-radius:5px;font-weight:700}
+.pend-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pend-btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 6px;border-radius:8px;font-weight:700;font-size:11.5px;border:1.5px solid transparent;transition:.15s;cursor:pointer}
+.pend-btn svg{width:13px;height:13px}
+.pend-done{background:var(--green-soft);color:#0F7A38;border-color:#CDEBD7}
+.pend-done:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.pend-reprog{background:var(--blue-soft);color:var(--blue-d);border-color:#CFE0FF}
+.pend-reprog:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pend-omit{background:#F5F5F8;color:var(--muted);border-color:var(--line)}
+.pend-omit:hover{background:var(--muted);color:#fff;border-color:var(--muted)}
+.pend-footer{padding:12px 14px;border-top:1px solid #FDD7E3;background:#FFFAFB;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pend-footer .btn{font-size:11.5px;padding:7px 12px}
+.pend-footer .btn svg{margin-right:4px}
 .tasks-head{padding:16px 18px;background:linear-gradient(120deg,var(--ink),var(--navy));color:#fff;display:flex;align-items:center;gap:11px;justify-content:space-between}
 .tasks-head .tt{font-family:var(--font-d);font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
 .tasks-head .tt svg{width:18px;height:18px}
@@ -340,34 +370,20 @@ input,select,textarea{font-family:inherit;font-size:14px;color:var(--text)}
 .day-chk.on{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 4px 10px rgba(47,107,255,.3)}
 .day-chk:hover:not(.on){border-color:var(--blue);color:var(--blue-d)}
 
-
-/* PANTALLA DE BLOQUEO de pendientes acumuladas */
-.pend-block{border:1px solid #F6C9D7;box-shadow:0 8px 28px rgba(224,36,90,.10)}
-.pb-head{display:flex;align-items:center;gap:11px;padding:15px 16px;background:linear-gradient(100deg,#FFF0F3,#FCE4EC);border-bottom:1px solid #F6C9D7}
-.pb-ic{width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;background:#fff;color:var(--red);box-shadow:var(--sh-sm)}
-.pb-ic svg{width:20px;height:20px}
-.pb-tt{font-family:var(--font-d);font-weight:700;font-size:15px;color:#B01646;line-height:1.1}
-.pb-sub{font-size:11.5px;color:#C2557A;font-weight:600;margin-top:2px}
-.pb-progress{padding:10px 16px 0;position:relative}
-.pb-bar{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--red),#FF6B95)}
-.pb-count{display:block;font-size:10.5px;color:var(--faint);font-weight:700;margin-top:6px;text-align:right}
-.pb-card{padding:14px 16px 16px}
-.pb-date{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--red);margin-bottom:6px}
-.pb-title{font-family:var(--font-d);font-weight:700;font-size:17px;line-height:1.25;color:var(--ink)}
-.pb-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:10.5px;font-weight:700}
-.pb-meta .rec{background:var(--blue-soft);color:var(--blue-d);padding:2px 7px;border-radius:5px}
-.pb-meta .ev{background:var(--gold-soft);color:#9A7B12;padding:2px 7px;border-radius:5px}
-.pb-meta .hr{color:var(--blue-d);font-family:var(--font-d)}
-.pb-notes{margin-top:10px;font-size:12px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;line-height:1.4}
-.pb-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-.pb-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:11px;font-weight:700;font-size:13.5px;transition:.15s;border:1.5px solid transparent}
-.pb-btn svg{width:16px;height:16px}
-.pb-done{background:var(--green);color:#fff}
-.pb-done:hover{background:#0E8A3E}
-.pb-repro{background:var(--blue-soft);color:var(--blue-d);border-color:#CFE0FF}
-.pb-repro:hover{background:#DCE9FF}
-.pb-skip{background:#fff;color:var(--muted);border-color:var(--line)}
-.pb-skip:hover{background:var(--surface-2);color:var(--red)}
+/* ===== PANTALLA TEÁSER (sin login) ===== */
+.teaser{min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center;padding:32px 20px;background:linear-gradient(180deg,#F8FAFD 0%,#EFF3F9 100%)}
+.teaser-card{background:#fff;border-radius:24px;box-shadow:0 24px 56px -16px rgba(10,24,52,.16),0 4px 12px -4px rgba(10,24,52,.06);padding:56px 48px;max-width:480px;width:100%;text-align:center;border:1px solid var(--line-2);position:relative;overflow:hidden}
+.teaser-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--blue) 0%,var(--gold) 100%)}
+.teaser-logo{margin-bottom:28px;display:flex;justify-content:center}
+.mark-lg{width:88px;height:88px;background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;border-radius:24px;display:grid;place-items:center;font-family:var(--font-d);font-weight:800;font-size:44px;position:relative;box-shadow:0 12px 24px -6px rgba(47,107,255,.4)}
+.dot-lg{position:absolute;top:14px;right:14px;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(255,255,255,.4)}
+.teaser-title{font-family:var(--font-d);font-weight:800;font-size:30px;color:var(--ink);line-height:1.15;margin:0 0 10px 0;letter-spacing:-.5px}
+.teaser-sub{font-size:15px;color:var(--muted);margin:0 0 36px 0;font-weight:500}
+.btn-lg{padding:14px 28px;font-size:15px;border-radius:12px;font-weight:700;box-shadow:0 8px 20px -4px rgba(47,107,255,.35);min-width:240px;justify-content:center}
+.btn-lg:hover{transform:translateY(-1px);box-shadow:0 12px 24px -4px rgba(47,107,255,.45)}
+.teaser-foot{margin-top:36px;padding-top:24px;border-top:1px solid var(--line-2)}
+.teaser-restricted{display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;color:var(--blue-d);background:var(--blue-soft);padding:6px 14px;border-radius:99px;margin-bottom:10px}
+.teaser-help{font-size:12px;color:var(--faint);font-weight:500}
 
 @media print{.topbar,.toolbar,.modal-foot,.no-print{display:none!important}
   .scrim{position:static;background:none;padding:0;backdrop-filter:none;display:block}
@@ -520,9 +536,7 @@ function setSync(m){const e=document.getElementById("sync");if(!e)return;e.class
 /* ---------- Mapeo DB <-> JS ---------- */
 function dbToPerson(r){return {id:r.id,nombre:r.nombre||"",puesto:r.puesto,proceso:r.proceso||"",pin:r.pin,rol:r.rol||"responsable",admin:!!r.admin};}
 function dbToProject(r){return {id:r.id,nombre:r.nombre,fuente:r.fuente,modalidad:r.modalidad||"individual",ownerId:r.owner_id||"",revisor:r.revisor||"",integrantes:r.integrantes||[],hitos:r.hitos||[],inicio:r.inicio||"",termino:r.termino||"",status:r.status||"Sin comenzar",nota:r.nota||"",obs:r.obs||"",ayuda:r.ayuda,prorroga:r.prorroga,cancelacion:r.cancelacion};}
-function dbToTask(r){return {id:r.id,ownerId:r.owner_id,titulo:r.titulo,tipo:r.tipo||"fija",rec:r.rec,fecha:r.fecha||"",hora:r.hora||"",conflicto:!!r.conflicto,notas:r.notas||"",hechas:r.hechas==null?{}:r.hechas,omitidas:r.omitidas==null?{}:r.omitidas,reprogramada:r.reprogramada||null};}
-function dbToAusencia(r){return {id:r.id,personId:r.person_id,desde:r.desde||"",hasta:r.hasta||"",motivo:r.motivo||""};}
-function dbToAutorizacion(r){return {id:r.id,fecha:r.fecha||"",autorizadoPor:r.autorizado_por||"",paraPersona:r.para_persona||"",alcance:r.alcance||"",tareasCanceladas:r.tareas_canceladas||[],motivo:r.motivo||""};}
+function dbToTask(r){return {id:r.id,ownerId:r.owner_id,titulo:r.titulo,tipo:r.tipo||"fija",rec:r.rec,fecha:r.fecha||"",hora:r.hora||"",conflicto:!!r.conflicto,notas:r.notas||"",hechas:r.hechas==null?{}:r.hechas,omitidas:r.omitidas==null?{}:r.omitidas,reprogramada:r.reprogramada||null,creada:r.creada||null};}
 
 /* ---------- LOAD: trae todo desde Supabase ---------- */
 async function load(){
@@ -535,21 +549,21 @@ async function load(){
       SB.from("gpr_projects").select("*"),
       SB.from("gpr_tasks").select("*"),
       SB.from("gpr_ausencias").select("*"),
-      SB.from("gpr_autorizaciones").select("*")
+      SB.from("gpr_autorizaciones").select("*").order("fecha",{ascending:false}).limit(50)
     ]);
     console.log("[DIAG] load: respuestas recibidas.");
     if(pe.error){ console.error("[DIAG] ERROR gpr_people:", pe.error.message, "| code:", pe.error.code, "| details:", pe.error.details, "| hint:", pe.error.hint); }
     if(pr.error){ console.error("[DIAG] ERROR gpr_projects:", pr.error.message, "| code:", pr.error.code, "| details:", pr.error.details, "| hint:", pr.error.hint); }
     if(tk.error){ console.error("[DIAG] ERROR gpr_tasks:", tk.error.message, "| code:", tk.error.code, "| details:", tk.error.details, "| hint:", tk.error.hint); }
-    if(au.error){ console.error("[DIAG] ERROR gpr_ausencias:", au.error.message, "| code:", au.error.code); }
-    if(az.error){ console.error("[DIAG] ERROR gpr_autorizaciones:", az.error.message, "| code:", az.error.code); }
+    if(au.error){ console.error("[DIAG] ERROR gpr_ausencias:", au.error.message); }
+    if(az.error){ console.error("[DIAG] ERROR gpr_autorizaciones:", az.error.message); }
     if(pe.error||pr.error||tk.error){ setSync("local"); return; }
     console.log("[DIAG] load OK. Personas:", pe.data?.length, "| Proyectos:", pr.data?.length, "| Tareas:", tk.data?.length, "| Ausencias:", au.data?.length, "| Autorizaciones:", az.data?.length);
     STATE.people   = (pe.data||[]).map(dbToPerson);
     STATE.projects = (pr.data||[]).map(dbToProject);
     STATE.tasks    = (tk.data||[]).map(dbToTask);
-    STATE.ausencias      = au.error ? (STATE.ausencias||[]) : (au.data||[]).map(dbToAusencia);
-    STATE.autorizaciones = az.error ? (STATE.autorizaciones||[]) : (az.data||[]).map(dbToAutorizacion);
+    STATE.ausencias = (au.data||[]).map(r=>({id:r.id,personId:r.person_id,desde:r.desde,hasta:r.hasta,motivo:r.motivo||""}));
+    STATE.autorizaciones = (az.data||[]).map(r=>({id:r.id,fecha:r.fecha,autorizadoPor:r.autorizado_por,paraPersona:r.para_persona,alcance:r.alcance,tareasCanceladas:r.tareas_canceladas,motivo:r.motivo||""}));
     LAST_SNAPSHOT = JSON.parse(JSON.stringify({people:STATE.people,projects:STATE.projects,tasks:STATE.tasks}));
     LOADED = true;
     setSync("saved");
@@ -632,24 +646,30 @@ function startPolling(){
 
 /* ============ TOPBAR ============ */
 function renderTopbar(){
-  let tabs=[];
+  // Sin sesión: topbar mínima (solo brand + botón login)
   if(!ME){
-    tabs=[["dash","Dashboard"],["proy","Proyectos"]];
-  } else if(canSeeExec()){
+    document.getElementById("topbar").innerHTML=`
+      <div class="brand"><div class="mark">R<span class="dot"></span></div><div><h1>Gestor de Proyectos</h1><p>RECOUROMEX · 2026</p></div></div>
+      <div class="spacer"></div>
+      <div class="tb-actions">
+        <div class="sync ${cfgOK?'saved':'local'}" id="sync"><span class="pip"></span><span>${cfgOK?'Conectado':'Sin conexión'}</span></div>
+        <button class="btn btn-ghost" id="login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>Iniciar sesión</button>
+      </div>`;
+    document.getElementById("login").onclick=openLogin;
+    return;
+  }
+  let tabs=[];
+  if(canSeeExec()){
     tabs=[["dash","Dashboard"],["proy","Proyectos"],["mihoja","Mi hoja"]];
     if(isDir()){const np=pendingReqs().length;tabs.push(["aprob",`Aprobaciones${np?`<span class="badge">${np}</span>`:""}`]);tabs.push(["equipo","Equipo"]);}
   } else {
     tabs=[["mipanel","Mi panel"],["mihoja","Mis proyectos"]];
   }
   const nav=tabs.map(([v,l])=>`<button data-view="${v}" class="${VIEW===v?'active':''}">${l}</button>`).join("");
-  // etiqueta de rol en el chip
-  const rolLbl=ME?(isDir()?"Dirección":isCoord()?"Coordinación · solo lectura":"Responsable"):"";
-  const right = ME
-    ? `<div class="usrchip"><div class="av">${pinit(ME)}</div><div><div class="nm">${esc(ME.puesto)}</div><div class="ro">${rolLbl}</div></div>
-        <button class="out" id="logout" title="Salir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></button></div>`
-    : `<button class="btn btn-ghost" id="login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>Iniciar sesión</button>`;
-  // botón de reporte solo para quienes ven el ejecutivo (o no logueados, modo consulta)
-  const showReport=(!ME)||canSeeExec();
+  const rolLbl=isDir()?"Dirección":isCoord()?"Coordinación · solo lectura":"Responsable";
+  const right = `<div class="usrchip"><div class="av">${pinit(ME)}</div><div><div class="nm">${esc(ME.puesto)}</div><div class="ro">${rolLbl}</div></div>
+      <button class="out" id="logout" title="Salir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></button></div>`;
+  const showReport=canSeeExec();
   document.getElementById("topbar").innerHTML=`
     <div class="brand"><div class="mark">R<span class="dot"></span></div><div><h1>Gestor de Proyectos</h1><p>RECOUROMEX · 2026</p></div></div>
     <div class="spacer"></div>
@@ -661,8 +681,7 @@ function renderTopbar(){
     </div>`;
   document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{VIEW=b.dataset.view;render();});
   const br=document.getElementById("btnReport");if(br)br.onclick=openReport;
-  if(ME)document.getElementById("logout").onclick=()=>{ME=null;VIEW="dash";render();toast("Sesión cerrada");};
-  else document.getElementById("login").onclick=openLogin;
+  document.getElementById("logout").onclick=()=>{ME=null;VIEW="dash";render();toast("Sesión cerrada");};
 }
 
 /* ============ RENDER ============ */
@@ -672,7 +691,6 @@ const app=document.getElementById("app");
    ============================================================ */
 let TASK_TAB = "hoy"; // hoy | semana | mes
 let TASK_VIEW_OWNER = null; // si está set, admin/coord viendo tareas de otro
-let PEND_TOTAL_SESION = 0; // total de pendientes al iniciar el bloqueo, para barra de progreso
 
 const DAY_LBL=["D","L","M","X","J","V","S"]; // 0=D
 const DAY_FULL=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
@@ -682,6 +700,11 @@ const dateFromYmd=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m
 
 // ¿la tarea aplica este día? (Date object)
 function taskApplies(t, d){
+  // 🔒 BLINDAJE: la tarea NO aplica ningún día anterior o IGUAL a su fecha de creación
+  if(t.creada){
+    const cy = ymd(d);
+    if(cy <= t.creada) return false;   // creada hoy → empieza a aplicar mañana
+  }
   if(t.tipo==="eventual") return t.fecha===ymd(d);
   if(!t.rec) return false;
   if(t.rec.freq==="diaria") return true;
@@ -704,6 +727,22 @@ function taskApplies(t, d){
   }
   return false;
 }
+
+/* ¿el usuario estaba ausente en esa fecha? */
+function ausenteEnFecha(ownerId, dYmd){
+  const aus = (STATE.ausencias||[]).filter(a => a.personId === ownerId);
+  return aus.some(a => dYmd >= a.desde && dYmd <= a.hasta);
+}
+
+/* ¿está omitida (manual o autorizada) en esa fecha? */
+function taskOmitida(t, d){
+  const k = ymd(d);
+  if(!t.omitidas) return false;
+  if(t.omitidas[k]) return true;
+  // marca global de "autorizado hasta cierta fecha" (cancela todas anteriores)
+  if(t.omitidas.__autorizado_hasta__ && k <= t.omitidas.__autorizado_hasta__) return true;
+  return false;
+}
 function taskDone(t, d){
   if(t.tipo==="eventual") return !!t.hechas;
   return !!(t.hechas && t.hechas[ymd(d)]);
@@ -724,121 +763,111 @@ function taskRecLabel(t){
   return "Fija";
 }
 
-
-/* ¿la persona estaba ausente ese día? (rango desde..hasta inclusivo) */
-function estaAusente(personId, d){
-  const k=ymd(d);
-  const list=STATE.ausencias||[];
-  return list.some(a=>a.personId===personId && a.desde && a.hasta && k>=a.desde && k<=a.hasta);
-}
-
-/* ¿está omitida ese día? (manual o reprogramada) */
-function taskOmitida(t, d){
-  return !!(t.omitidas && t.omitidas[ymd(d)]);
-}
-
-/* Pendientes acumuladas de un dueño: días (últimos PEND_PISO_DIAS, hasta AYER)
-   en que la tarea aplicaba pero NO fue hecha, NI omitida, NI hubo ausencia. */
-const PEND_PISO_DIAS = 60;
-
-function tareasPendientes(ownerId){
-  const list=tasksForOwner(ownerId);
-  const out=[];
-  const hoy=new Date(); hoy.setHours(0,0,0,0);
-  // recorre desde ayer hacia atrás hasta el piso
-  for(let i=1;i<=PEND_PISO_DIAS;i++){
-    const d=new Date(hoy); d.setDate(hoy.getDate()-i);
-    if(estaAusente(ownerId, d)) continue; // día completo en ausencia: nada pendiente
-    for(const t of list){
-      if(!taskApplies(t,d)) continue;
-      if(taskDone(t,d)) continue;
-      if(taskOmitida(t,d)) continue;
-      out.push({tarea:t, fecha:ymd(d)});
-    }
-  }
-  // ordenar por fecha ascendente (lo más viejo primero)
-  out.sort((a,b)=>a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0);
-  return out;
-}
-
-/* Acciones sobre una pendiente */
-function pendMarcarHecha(t, fechaYmd){
-  if(t.tipo==="eventual"){ t.hechas=true; }
-  else { if(!t.hechas||typeof t.hechas!=="object") t.hechas={}; t.hechas[fechaYmd]=true; }
-}
-
-function pendOmitir(t, fechaYmd, razon){
-  if(!t.omitidas||typeof t.omitidas!=="object") t.omitidas={};
-  t.omitidas[fechaYmd]=razon||"manual";
-}
-
-function pendReprogramarHoy(t, fechaYmd){
-  pendOmitir(t, fechaYmd, "reprogramada");
-  const hoyK=ymd(new Date());
-  t.reprogramada=hoyK;
-  if(t.tipo==="eventual"){
-    t.fecha=hoyK;
-    t.hechas=false;
-  }
-}
-
 function tasksForOwner(ownerId){return STATE.tasks?STATE.tasks.filter(t=>t.ownerId===ownerId):[];}
 
-/* Pantalla de BLOQUEO: pendientes acumuladas una por una */
-function pendBlockHTML(pend){
-  const total=pend.length;
-  if(PEND_TOTAL_SESION < total) PEND_TOTAL_SESION = total;
-  const resueltas = PEND_TOTAL_SESION - total;
-  const pct = PEND_TOTAL_SESION ? Math.round(resueltas/PEND_TOTAL_SESION*100) : 0;
-  const {tarea, fecha}=pend[0];
-  const d=dateFromYmd(fecha);
-  const fLbl=`${DAY_FULL[d.getDay()]} ${d.getDate()} ${MONTH_LBL[d.getMonth()]}`;
-  const restantes=total-1;
+/* tareas agrupadas por día para una ventana (Hoy / 7 días / 30 días) */
+/* ========= PANTALLA DE BLOQUEO DE PENDIENTES ========= */
+function tasksBlockedHTML(ownerId, pendientes){
+  // ordenar pendientes: más antiguos primero, agrupar por fecha
+  pendientes = pendientes.slice().sort((a,b)=>a.fechaYmd<b.fechaYmd?-1:1);
+  const total = pendientes.length;
+  const grupos = {};
+  pendientes.forEach(p=>{
+    if(!grupos[p.fechaYmd]) grupos[p.fechaYmd]=[];
+    grupos[p.fechaYmd].push(p);
+  });
+  const dias = Object.keys(grupos).sort();
+
+  const fmtFecha = (ymdStr)=>{
+    const d = dateFromYmd(ymdStr);
+    return `${DAY_FULL[d.getDay()]} ${d.getDate()} de ${MONTH_LBL[d.getMonth()]}`;
+  };
+
+  const filas = dias.map(dy=>{
+    const items = grupos[dy].map((p,idx)=>{
+      const t = p.tarea;
+      const meta = []; if(t.hora) meta.push(`<span class="hr">${esc(t.hora)}</span>`);
+      meta.push(`<span class="${t.tipo==='eventual'?'ev':'rec'}">${esc(taskRecLabel(t))}</span>`);
+      const key = `${t.id}|${p.fechaYmd}`;
+      return `<div class="pend-item">
+        <div class="pend-info">
+          <div class="pend-tx">${esc(t.titulo)}</div>
+          <div class="pend-meta">${meta.join(' ')}</div>
+        </div>
+        <div class="pend-actions">
+          <button class="pend-btn pend-done" data-pend-act="hecha" data-pend-key="${key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Hecha</button>
+          <button class="pend-btn pend-reprog" data-pend-act="reprogramar" data-pend-key="${key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.8.9 6.5 2.4M21 5v5h-5"/></svg>Hacerla hoy</button>
+          <button class="pend-btn pend-omit" data-pend-act="omitir" data-pend-key="${key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>Omitir</button>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="pend-day"><div class="pend-day-head">${fmtFecha(dy)}</div>${items}</div>`;
+  }).join('');
+
   return `<div class="tasks-panel pend-block">
-    <div class="pb-head">
-      <div class="pb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
-      <div><div class="pb-tt">Tienes ${total} pendiente${total!==1?'s':''}</div><div class="pb-sub">Resuélvelas para ver tus tareas de hoy</div></div>
-    </div>
-    <div class="pb-progress"><div class="pb-bar" style="width:${pct}%"></div><span class="pb-count">${restantes>0?restantes+' más después de esta':'última pendiente'}</span></div>
-    <div class="pb-card">
-      <div class="pb-date">${fLbl}</div>
-      <div class="pb-title">${esc(tarea.titulo)}</div>
-      <div class="pb-meta"><span class="${tarea.tipo==='eventual'?'ev':'rec'}">${esc(taskRecLabel(tarea))}</span>${tarea.hora?`<span class="hr">${esc(tarea.hora)}</span>`:''}</div>
-      ${tarea.notas?`<div class="pb-notes">${esc(tarea.notas)}</div>`:''}
-      <div class="pb-actions">
-        <button class="pb-btn pb-done" data-pend-act="hecha" data-pend-id="${tarea.id}" data-pend-fecha="${fecha}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg>La hice
-        </button>
-        <button class="pb-btn pb-repro" data-pend-act="reprogramar" data-pend-id="${tarea.id}" data-pend-fecha="${fecha}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.4 2.6L3 8"/><path d="M3 4v4h4"/></svg>Hacerla hoy
-        </button>
-        <button class="pb-btn pb-skip" data-pend-act="omitir" data-pend-id="${tarea.id}" data-pend-fecha="${fecha}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>Omitir
-        </button>
+    <div class="pend-header">
+      <div class="pend-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/></svg></div>
+      <div>
+        <div class="pend-title">${total} tarea${total!==1?'s':''} pendiente${total!==1?'s':''}</div>
+        <div class="pend-sub">Resuelve cada una antes de seguir con tu día</div>
       </div>
+    </div>
+    <div class="pend-help">
+      Para cada tarea elige: <b style="color:var(--green)">✓ Hecha</b> si la cumpliste, <b style="color:var(--blue-d)">⟳ Hacerla hoy</b> si la mueves para hoy, o <b style="color:var(--red)">✕ Omitir</b> si decides saltarla.
+    </div>
+    <div class="pend-list">${filas}</div>
+    <div class="pend-footer">
+      <button class="btn btn-line" id="pendAusente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Estoy ausente</button>
+      <button class="btn btn-gold" id="pendAutorizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>Autorización Dirección</button>
     </div>
   </div>`;
 }
 
-function bindPendBlock(ownerId){
-  document.querySelectorAll("[data-pend-act]").forEach(b=>{
-    b.onclick=(ev)=>{
-      ev.stopPropagation();
-      const act=b.dataset.pendAct;
-      const id=b.dataset.pendId;
-      const fecha=b.dataset.pendFecha;
-      const t=STATE.tasks.find(x=>x.id===id);
+function bindBlockedPanel(ownerId){
+  // delegación: un solo listener en el panel para todos los botones
+  const root = document.querySelector(".pend-block");
+  if(!root) return;
+  root.onclick = async (ev) => {
+    // botones de pendiente individual
+    const actBtn = ev.target.closest("[data-pend-act]");
+    if(actBtn){
+      const act = actBtn.dataset.pendAct;
+      const [tid, fy] = actBtn.dataset.pendKey.split("|");
+      const t = STATE.tasks.find(x=>x.id===tid);
       if(!t) return;
-      if(act==="hecha") pendMarcarHecha(t, fecha);
-      else if(act==="omitir") pendOmitir(t, fecha, "manual");
-      else if(act==="reprogramar") pendReprogramarHoy(t, fecha);
-      save();
+      if(act==="hecha"){
+        if(t.tipo==="eventual") t.hechas = true;
+        else { if(!t.hechas) t.hechas={}; t.hechas[fy] = true; }
+      } else if(act==="omitir"){
+        if(!t.omitidas) t.omitidas = {};
+        t.omitidas[fy] = "manual";
+      } else if(act==="reprogramar"){
+        // marcar el día original como omitido (reason='reprogramada')
+        // y, si es eventual, mover su fecha a hoy
+        if(!t.omitidas) t.omitidas = {};
+        t.omitidas[fy] = "reprogramada";
+        if(t.tipo==="eventual"){
+          t.fecha = ymd(new Date());
+        }
+        // para fijas: el día de hoy ya aplicará naturalmente (no requiere acción)
+      }
+      await save();
       render();
-    };
-  });
+      return;
+    }
+    // botón "Estoy ausente"
+    if(ev.target.closest("#pendAusente")){
+      openAusenciaModal(ownerId);
+      return;
+    }
+    // botón "Autorización Dirección"
+    if(ev.target.closest("#pendAutorizar")){
+      openAutorizacionModal(ownerId);
+      return;
+    }
+  };
 }
 
-/* tareas agrupadas por día para una ventana (Hoy / 7 días / 30 días) */
 function tasksWindow(ownerId, mode){
   const list=tasksForOwner(ownerId);
   const today=new Date(); today.setHours(0,0,0,0);
@@ -849,18 +878,57 @@ function tasksWindow(ownerId, mode){
   return days;
 }
 
+/* ========= FASE 5B-1 — PENDIENTES ACUMULADAS =========
+ * Recorre desde la fecha más antigua razonable hasta AYER (no hoy)
+ * y devuelve [{tarea, fecha, fechaYmd}] de las que aplicaban
+ * pero no fueron hechas ni omitidas ni el usuario estuvo ausente.
+ * Respeta también la fecha de creación (no busca antes de ella).
+ */
+function tareasPendientes(ownerId){
+  const list = tasksForOwner(ownerId);
+  if(!list.length) return [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const yest  = new Date(today); yest.setDate(today.getDate()-1);
+  // determinar fecha de arranque: la más reciente entre
+  //   (a) la fecha de creación más antigua de cualquier tarea suya
+  //   (b) 365 días atrás (límite duro de búsqueda por performance)
+  let oldest = null;
+  for(const t of list){
+    if(t.creada){
+      if(!oldest || t.creada < oldest) oldest = t.creada;
+    }
+  }
+  // si alguna tarea no tiene 'creada' (legacy), usar 1 año atrás
+  const farBack = new Date(today); farBack.setDate(today.getDate()-365);
+  const start = oldest ? dateFromYmd(oldest) : farBack;
+  // si la más antigua es POSTERIOR a ayer, no hay nada que revisar
+  if(start > yest) return [];
+
+  const pending = [];
+  for(let d = new Date(start); d <= yest; d.setDate(d.getDate()+1)){
+    const dy = ymd(d);
+    // si el usuario estaba ausente ese día, omitimos
+    if(ausenteEnFecha(ownerId, dy)) continue;
+    for(const t of list){
+      if(!taskApplies(t, d)) continue;
+      if(taskDone(t, d)) continue;
+      if(taskOmitida(t, d)) continue;
+      pending.push({tarea: t, fechaYmd: dy, fecha: new Date(d)});
+    }
+  }
+  return pending;
+}
+
 /* HTML del panel lateral */
 function tasksPanelHTML(ownerId, readonly){
   const owner=person(ownerId);
   const isViewingOther=ownerId!==(ME?ME.id:null);
-  // BLOQUEO: si el dueño (no readonly, soy yo) tiene pendientes acumuladas,
-  // mostrar pantalla de bloqueo una-por-una en lugar del panel normal.
-  if(!readonly && !isViewingOther){
-    const pend=tareasPendientes(ownerId);
-    if(pend.length){
-      return pendBlockHTML(pend);
-    } else {
-      PEND_TOTAL_SESION = 0; // limpio: desbloqueado
+
+  // 🚨 PANTALLA DE BLOQUEO: solo si es el usuario propio (no modo "ver otro")
+  if(!isViewingOther && !readonly && !SESION_AUTORIZADA[ownerId]){
+    const pendientes = tareasPendientes(ownerId);
+    if(pendientes.length > 0){
+      return tasksBlockedHTML(ownerId, pendientes);
     }
   }
 
@@ -913,12 +981,11 @@ function tasksPanelHTML(ownerId, readonly){
 }
 
 function bindTasksPanel(ownerId, readonly){
-  // si estamos en pantalla de bloqueo, sólo enlazar sus acciones
-  if(!readonly && ownerId===(ME?ME.id:null) && tareasPendientes(ownerId).length){
-    bindPendBlock(ownerId);
+  // si está la pantalla bloqueada, sus handlers son distintos
+  if(document.querySelector(".pend-block")){
+    bindBlockedPanel(ownerId);
     return;
   }
-
   document.querySelectorAll("[data-ttab]").forEach(b=>b.onclick=()=>{TASK_TAB=b.dataset.ttab;render();});
   if(!readonly){
     document.querySelectorAll("[data-task-ck]").forEach(b=>b.onclick=(ev)=>{ev.stopPropagation();const[id,dy]=b.dataset["taskCk"].split("|");const t=STATE.tasks.find(x=>x.id===id);if(t){toggleTaskDone(t,dateFromYmd(dy));save();render();}});
@@ -939,6 +1006,104 @@ function openTaskOtherPicker(){
 }
 
 /* Modal: crear / editar tarea */
+/* ========= MODAL: Estoy ausente ========= */
+function openAusenciaModal(ownerId){
+  const hoy = ymd(new Date());
+  showModal(`<div class="modal sm-x"></div>`);
+  document.querySelector(".modal").classList.add("sm");
+  document.querySelector(".modal").innerHTML = `<div class="modal-head">
+    <div><h3>Estoy ausente</h3><div class="hsub">Pausa el bloqueo de pendientes en los días marcados</div></div>
+    <button class="xclose" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="modal-body">
+    <div style="background:var(--blue-soft);padding:12px;border-radius:10px;font-size:12.5px;color:var(--blue-d);margin-bottom:14px">
+      <b>¿Cómo funciona?</b><br>Las tareas que aplicarían entre las fechas que elijas <b>no contarán como pendientes</b>. Útil para vacaciones, incapacidades o días no laborables.
+    </div>
+    <div class="frow">
+      <div class="field"><label>Desde</label><input type="date" id="au_desde" value="${hoy}"></div>
+      <div class="field"><label>Hasta</label><input type="date" id="au_hasta" value="${hoy}"></div>
+    </div>
+    <div class="field"><label>Motivo (opcional)</label><input id="au_motivo" placeholder="Ej. Vacaciones, capacitación externa..."></div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-line" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-primary" id="au_save">Marcar ausencia</button>
+  </div>`;
+  document.getElementById("au_save").onclick = async ()=>{
+    const desde = val("au_desde"), hasta = val("au_hasta");
+    if(!desde || !hasta){ toast("Pon ambas fechas"); return; }
+    if(desde > hasta){ toast("'Desde' debe ser igual o anterior a 'Hasta'"); return; }
+    const motivo = val("au_motivo");
+    if(!STATE.ausencias) STATE.ausencias = [];
+    const id = "au" + Date.now();
+    STATE.ausencias.push({id, personId: ownerId, desde, hasta, motivo});
+    // llamar RPC directamente (no usar save() ya que ausencias no va por diff)
+    try{
+      const {error} = await SB.rpc("gpr_set_ausencia", {p_pin: ME.pin, a: {id, personId: ownerId, desde, hasta, motivo}});
+      if(error){ toast("Error: "+error.message); STATE.ausencias = STATE.ausencias.filter(a=>a.id!==id); }
+      else { toast("Ausencia registrada"); closeModal(); render(); }
+    }catch(e){ toast("Error al guardar"); console.error(e); }
+  };
+}
+
+/* ========= MODAL: Autorización inmediata de Dirección ========= */
+function openAutorizacionModal(paraId){
+  showModal(`<div class="modal sm-x"></div>`);
+  document.querySelector(".modal").classList.add("sm");
+  document.querySelector(".modal").innerHTML = `<div class="modal-head">
+    <div><h3>Autorización de Dirección</h3><div class="hsub">Solo Dirección puede cancelar pendientes acumuladas</div></div>
+    <button class="xclose" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="modal-body">
+    <div style="background:var(--gold-soft);padding:12px;border-radius:10px;font-size:12.5px;color:#7A5E0A;margin-bottom:14px">
+      <b>Pásale el dispositivo a Dirección</b> para que teclee su PIN y autorice esta cancelación. Queda registro auditable de la decisión.
+    </div>
+    <div class="field"><label>PIN de Dirección</label><input id="az_pin" class="pin-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autofocus></div>
+    <div class="field"><label>Alcance</label>
+      <select id="az_alcance">
+        <option value="sesion">Solo esta vez (desbloquea ahora; mañana pueden volver a aparecer si no se resuelven)</option>
+        <option value="todas">Todas las acumuladas (cancela definitivamente todas las pendientes anteriores)</option>
+      </select>
+    </div>
+    <div class="field"><label>Motivo (opcional)</label><input id="az_motivo" placeholder="Ej. Inicio limpio, vacaciones aprobadas, error del sistema..."></div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-line" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-gold" id="az_save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px;height:14px"><path d="M5 13l4 4L19 7"/></svg>Autorizar</button>
+  </div>`;
+  document.getElementById("az_pin").focus();
+  document.getElementById("az_save").onclick = async ()=>{
+    const pin = val("az_pin");
+    const alcance = val("az_alcance");
+    const motivo = val("az_motivo");
+    if(!pin){ toast("Falta el PIN de Dirección"); return; }
+    try{
+      const {data, error} = await SB.rpc("gpr_autorizar_cancelacion", {
+        p_pin_dir: pin,
+        p_para_id: paraId,
+        p_alcance: alcance,
+        p_motivo: motivo
+      });
+      if(error){
+        toast(error.message.includes("PIN")?"PIN incorrecto":error.message.includes("Dirección")?"Solo Dirección puede autorizar":"Error: "+error.message);
+        return;
+      }
+      toast(alcance==="todas"?`✓ ${data?.tareas_canceladas||0} pendientes canceladas`:"✓ Desbloqueado por esta sesión");
+      // si fue 'todas', recargar para ver el efecto; si fue 'sesion', solo marcar bandera local
+      if(alcance==="sesion"){
+        SESION_AUTORIZADA[paraId] = true;
+      }
+      closeModal();
+      await load();
+      render();
+    }catch(e){ toast("Error al autorizar"); console.error(e); }
+  };
+}
+
+/* Bandera en memoria: si Dirección autorizó "solo sesión", saltamos el bloqueo
+   hasta que recarguen la pestaña */
+const SESION_AUTORIZADA = {};
+
 function openTaskForm(t, ownerId){
   const isNew=!t;
   const d=t?JSON.parse(JSON.stringify(t)):{id:"t"+Date.now(),ownerId:ownerId||ME.id,titulo:"",tipo:"fija",rec:{freq:"diaria",dias:[],diasMes:[],regla:""},fecha:ymd(new Date()),hora:"",conflicto:false,notas:"",hechas:{}};
@@ -1049,11 +1214,35 @@ function openTaskForm(t, ownerId){
 
 function render(){
   renderTopbar();
+  // Sin sesión: pantalla teáser sobria, sin datos visibles
+  if(!ME){ return renderTeaser(); }
   // protección por rol: si un responsable cae en vista ejecutiva, lo mandamos a su panel
-  if(ME&&!canSeeExec()&&(VIEW==="dash"||VIEW==="proy"||VIEW==="aprob"||VIEW==="equipo"))VIEW="mipanel";
-  if(ME&&isCoord()&&(VIEW==="aprob"||VIEW==="equipo"))VIEW="dash";
-  if(!ME&&(VIEW==="mihoja"||VIEW==="mipanel"||VIEW==="aprob"||VIEW==="equipo"))VIEW="dash";
+  if(!canSeeExec()&&(VIEW==="dash"||VIEW==="proy"||VIEW==="aprob"||VIEW==="equipo"))VIEW="mipanel";
+  if(isCoord()&&(VIEW==="aprob"||VIEW==="equipo"))VIEW="dash";
   ({dash:renderDash,proy:renderProy,mihoja:renderMiHoja,equipo:renderEquipo,aprob:renderAprob,mipanel:renderMiPanel}[VIEW]||renderDash)();
+}
+
+/* ========= PANTALLA TEÁSER (sin login) ========= */
+function renderTeaser(){
+  app.innerHTML = `<div class="teaser">
+    <div class="teaser-card">
+      <div class="teaser-logo"><span class="mark-lg">R<span class="dot-lg"></span></span></div>
+      <h1 class="teaser-title">Gestor de Proyectos REC</h1>
+      <p class="teaser-sub">Plataforma interna de Recouromex</p>
+      <button class="btn btn-primary btn-lg" id="teaserLogin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;margin-right:8px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>
+        Iniciar sesión
+      </button>
+      <div class="teaser-foot">
+        <div class="teaser-restricted">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:6px;vertical-align:-2px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Acceso restringido
+        </div>
+        <div class="teaser-help">Si no tienes acceso, contacta a Dirección General</div>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById("teaserLogin").onclick = openLogin;
 }
 
 function renderDash(){
